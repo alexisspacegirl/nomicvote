@@ -1,0 +1,19 @@
+{
+  "name": "nomicvote",
+  "version": "0.0.1",
+  "description": "Simple voting system for a couch game of Nomic",
+  "author": "Adam Hovorka <adamhovorka@gmail.com>",
+  "license": "MIT",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adamhovorka/nomicvote.git"
+  },
+  "private": true,
+  "dependencies": {
+    "ws": "^7.1.0"
+  }
+}
