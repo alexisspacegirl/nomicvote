@@ -1,8 +1,8 @@
 "use strict"
 
-const http = require("http");
-const fs   = require("fs");
-const ws   = require("ws");
+const WebSocket = require("ws");
+const http      = require("http");
+const fs        = require("fs");
 
 const Router = require("./lib/router");
 const Static = require("./lib/static");
@@ -14,6 +14,7 @@ const PORT = Math.clamp(+process.env.PORT||8080, 1, 65535);
 const HOST = "0.0.0.0";
 
 const server = http.createServer();
+const wss = new WebSocket.Server({server});
 const stat = new Static("./public");
 const app = new Router();
 
@@ -36,6 +37,11 @@ app.get("/hist.json", (req, res) => sj(res, []));
 //app.put("/file/(.+)", (req, res, path) => {
 //  req.pipe(fs.createWriteStream("./static/"+path[1]));
 //});
+
+wss.on("connection", ws => {
+  ws.on("message", msg => console.log("msg", msg));
+  ws.send("hello");
+});
 
 server.on("request", (req, res) => {
   console.log(`${Date.now()} ${req.method} ${req.url}`);
