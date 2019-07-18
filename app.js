@@ -1,11 +1,11 @@
 "use strict"
 
-const WebSocket = require("ws");
-const http      = require("http");
-const fs        = require("fs");
+const http = require("http");
+const fs = require("fs");
 
 const Router = require("./lib/router");
 const Static = require("./lib/static");
+const Socket = require("./lib/socket");
 
 if (!fs.existsSync("./logs")) fs.mkdirSync("./logs");
 
@@ -14,8 +14,8 @@ const PORT = Math.clamp(+process.env.PORT||8080, 1, 65535);
 const HOST = "0.0.0.0";
 
 const server = http.createServer();
-const wss = new WebSocket.Server({server});
 const stat = new Static("./public");
+const wss = new Socket(server);
 const app = new Router();
 
 function sj(res, data) { // For convenience
@@ -38,9 +38,18 @@ app.get("/hist.json", (req, res) => sj(res, []));
 //  req.pipe(fs.createWriteStream("./static/"+path[1]));
 //});
 
-wss.on("connection", ws => {
-  ws.on("message", msg => console.log("msg", msg));
-  ws.send("hello");
+wss.on("open", client => {
+  console.log(`${Date.now()} SOCK open`);
+  client.send("hello", {foo:"bar"});
+});
+
+wss.on("close", client => {
+  console.log(`${Date.now()} SOCK close`);
+});
+
+wss.on("world", (client, data) => {
+  console.log(`${Date.now()} SOCK world`, data);
+  wss.sendAll("yay", {meh:"woot"});
 });
 
 server.on("request", (req, res) => {
