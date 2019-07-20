@@ -58,4 +58,4 @@ server.on("request", (req, res) => {
 });
 
 server.listen(PORT/*, HOST*/);
-console.log(`Running on http://${HOST}:${PORT}`);
+console.log(`${Date.now()} Running on http://${HOST}:${PORT}`);
